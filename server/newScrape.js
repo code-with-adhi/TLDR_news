@@ -1,30 +1,51 @@
+// server/newScrape.js
+
 import puppeteer from "puppeteer";
+import { JSDOM } from "jsdom";
+import { Readability } from "@mozilla/readability";
 
 const scrapeArticle = async (url) => {
-  const browser = await puppeteer.launch({ headless: true });
-  const page = await browser.newPage();
-
-  await page.goto(url, { waitUntil: "networkidle2", timeout: 30000 });
-
-  const result = await page.evaluate(() => {
-    const title = document.querySelector("h1")?.innerText || "";
-    const date =
-      document.querySelector("meta[property='article:published_time']")
-        ?.content || "";
-
-    const paragraphs = Array.from(
-      document.querySelectorAll("div.articlebodycontent p")
+  let browser = null;
+  try {
+    browser = await puppeteer.launch({ headless: true });
+    const page = await browser.newPage();
+    await page.setUserAgent(
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
     );
-    const content = paragraphs
-      .filter((p) => p && p.innerText)
-      .map((p) => p.innerText)
-      .join("\n\n");
+    await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60000 });
 
-    return { title, date, content };
-  });
+    // Wait for the main content to load
+    await page.waitForSelector("body", { timeout: 10000 });
 
-  await browser.close();
-  return result;
+    // Get the full HTML content of the page
+    const pageContent = await page.content();
+
+    // Use JSDOM to create a DOM document from the HTML
+    const dom = new JSDOM(pageContent, { url });
+
+    // Use Readability to parse the document
+    const reader = new Readability(dom.window.document);
+    const article = reader.parse();
+
+    if (article) {
+      // Clean up content and return
+      return {
+        title: article.title,
+        content: article.textContent,
+      };
+    } else {
+      // Fallback if Readability fails
+      console.error(`Readability failed to parse article at ${url}`);
+      return { title: "", content: "" };
+    }
+  } catch (error) {
+    console.error(`Scraping error on ${url}:`, error.message);
+    return { title: "", content: "" };
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+  }
 };
 
 export default scrapeArticle;
