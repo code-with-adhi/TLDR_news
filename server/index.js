@@ -4,6 +4,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import axios from "axios";
 import scrapeArticle from "./newScrape.js"; // Make sure this file exists and exports properly
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 dotenv.config();
 
@@ -14,6 +15,7 @@ app.use(cors());
 app.use(express.json());
 
 const GNEWS_API_KEY = process.env.GNEWS_API_KEY;
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 // Route 1: Get latest news from GNews API
 app.get("/api/news", async (req, res) => {
@@ -53,6 +55,44 @@ app.get("/api/scrape", async (req, res) => {
   } catch (error) {
     console.error("Scraping error:", error.message);
     res.status(500).json({ error: "Failed to scrape the article." });
+  }
+});
+
+// Route 3: Summarize an article using the Gemini API
+app.post("/api/summarize", async (req, res) => {
+  try {
+    const { articleText } = req.body;
+
+    if (!articleText) {
+      return res.status(400).json({ error: "Article text is required." });
+    }
+
+    if (!GEMINI_API_KEY) {
+      return res
+        .status(500)
+        .json({ error: "Gemini API key is not configured on the server." });
+    }
+
+    // Configure the Gemini API client
+    const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+
+    // Corrected model name
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+    // Prepare the prompt
+    const prompt = `Summarize the following article:\n\n${articleText}`;
+
+    // Call the Gemini API
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const summaryText = response.text();
+
+    res.json({ summary: summaryText });
+  } catch (err) {
+    console.error("Error in summarization endpoint:", err);
+    res
+      .status(500)
+      .json({ error: "Internal server error during summarization." });
   }
 });
 

@@ -5,14 +5,16 @@ const ArticlePage = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
 
-  const articleFromList = state?.article; // The initial data from the GNews API
+  const articleFromList = state?.article;
 
-  // State to hold the scraped content and handle loading/errors
   const [scrapedArticle, setScrapedArticle] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // If the initial article data is missing, handle the error gracefully
+  // New state variables for summarization
+  const [summary, setSummary] = useState("");
+  const [isSummarizing, setIsSummarizing] = useState(false);
+
   if (!articleFromList) {
     return (
       <div>
@@ -22,7 +24,6 @@ const ArticlePage = () => {
     );
   }
 
-  // Use the useEffect hook to fetch the scraped data
   useEffect(() => {
     const fetchScrapedContent = async () => {
       try {
@@ -31,11 +32,9 @@ const ArticlePage = () => {
             articleFromList.url
           )}`
         );
-
         if (!response.ok) {
           throw new Error("Failed to scrape the article content.");
         }
-
         const data = await response.json();
         setScrapedArticle(data);
       } catch (err) {
@@ -45,11 +44,40 @@ const ArticlePage = () => {
         setLoading(false);
       }
     };
-
     fetchScrapedContent();
-  }, [articleFromList.url]); // Re-run the effect if the article URL changes
+  }, [articleFromList.url]);
 
-  // Conditional rendering based on loading and error states
+  // New function to handle the API call for summarization
+  const handleSummarize = async () => {
+    setIsSummarizing(true);
+    setSummary("");
+    try {
+      if (scrapedArticle && scrapedArticle.content) {
+        const response = await fetch("http://localhost:5000/api/summarize", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ articleText: scrapedArticle.content }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to get summary from the server.");
+        }
+
+        const data = await response.json();
+        setSummary(data.summary);
+      } else {
+        setSummary("Article content is not available for summarization.");
+      }
+    } catch (err) {
+      console.error("Error summarizing article:", err);
+      setSummary("Failed to summarize the article. Please try again.");
+    } finally {
+      setIsSummarizing(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="article-page">
@@ -78,11 +106,10 @@ const ArticlePage = () => {
     );
   }
 
-  // Use the scraped content if it exists, otherwise fall back to the initial data
   const displayedTitle = scrapedArticle?.title || articleFromList.title;
   const displayedContent =
     scrapedArticle?.content || articleFromList.description;
-  const displayedImage = articleFromList.image; // Use the image from the initial API call
+  const displayedImage = articleFromList.image;
 
   return (
     <div className="article-page">
@@ -90,6 +117,23 @@ const ArticlePage = () => {
       <h1>{displayedTitle}</h1>
       {displayedImage && <img src={displayedImage} alt={displayedTitle} />}
       <p>{displayedContent}</p>
+
+      {/* New button to trigger summarization */}
+      <button
+        onClick={handleSummarize}
+        disabled={isSummarizing || !scrapedArticle}
+      >
+        {isSummarizing ? "Summarizing..." : "Summarize Article"}
+      </button>
+
+      {/* New section to display the summary */}
+      {summary && (
+        <div className="summary-container">
+          <h3>Summary</h3>
+          <p>{summary}</p>
+        </div>
+      )}
+
       <a href={articleFromList.url} target="_blank" rel="noopener noreferrer">
         View Original Source
       </a>

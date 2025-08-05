@@ -9,13 +9,8 @@ lerna-debug.log*
 # Dependency directories
 /node_modules
 
-# Build artifacts
-dist
-build
-vite-dist
-
-# Local environment variables
-.env.local
+# Environment variables
+.env
 
 # Editor directories and files
 .vscode/*

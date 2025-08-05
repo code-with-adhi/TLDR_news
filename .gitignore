@@ -1,0 +1,17 @@
+# Ignore the node_modules folders in both client and server directories
+/client/node_modules
+/server/node_modules
+
+# Ignore all .env files that may be at the root or in sub-directories
+.env
+
+# Ignore build artifacts if they are not inside the client/server directories
+/dist
+/build
+
+# Ignore OS files
+.DS_Store
+
+# Ignore editor-specific files
+.vscode
+.idea
