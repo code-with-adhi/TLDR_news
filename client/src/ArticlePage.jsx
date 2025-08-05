@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./ArticlePage.css";
-
 const ArticlePage = () => {
   const { state } = useLocation();
   const navigate = useNavigate();

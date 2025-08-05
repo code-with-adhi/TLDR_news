@@ -24,6 +24,17 @@ app.get("/api/news", async (req, res) => {
       `https://gnews.io/api/v4/top-headlines?lang=en&country=in&max=10&apikey=${GNEWS_API_KEY}`
     );
 
+    // This console.log will show you the exact data returned by the API
+    console.log("GNews API response status:", response.status);
+    console.log("GNews API response data:", response.data);
+
+    if (!response.data || !response.data.articles) {
+      console.error("GNews API response is not in the expected format.");
+      return res
+        .status(500)
+        .json({ error: "Failed to fetch news from GNews." });
+    }
+
     const news = response.data.articles.map((article, index) => ({
       id: index + 1,
       title: article.title,
@@ -36,11 +47,14 @@ app.get("/api/news", async (req, res) => {
 
     res.json(news);
   } catch (error) {
+    // This will print the full error from Axios, including any messages from GNews
     console.error("Error fetching news from GNews:", error.message);
+    if (error.response) {
+      console.error("GNews API Error Response Data:", error.response.data);
+    }
     res.status(500).json({ error: "Failed to fetch news." });
   }
 });
-
 // Route 2: Scrape full content from a specific news URL
 app.get("/api/scrape", async (req, res) => {
   const { url } = req.query;
