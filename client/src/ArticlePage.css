@@ -1,0 +1,110 @@
+body {
+  background-color: black;
+  color: ivory;
+  display: flex; /* Use flexbox on the body */
+  justify-content: center; /* Center the content horizontally */
+}
+
+.article-page {
+  max-width: 1300px;
+  width: 90%;
+  margin: 0 20px; /* Use margins to prevent touching screen edges */
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  line-height: 1.7;
+  overflow-wrap: break-word;
+  color: ivory;
+}
+
+.article-page h1 {
+  font-size: 2.8em;
+  margin-bottom: 25px;
+  color: ivory;
+  text-align: center;
+}
+
+.article-page img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 20px auto;
+  border-radius: 8px;
+}
+
+.article-page p {
+  font-size: 1.1em;
+  margin-bottom: 18px;
+  text-align: left;
+}
+
+.article-page a {
+  display: inline-block;
+  color: red;
+  text-decoration: none;
+}
+
+.article-page .button-container {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 25px;
+  margin-bottom: 25px;
+}
+
+.article-page .button-container button {
+  padding: 10px 15px;
+  border: none;
+  background-color: #007bff;
+  color: ivory;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.article-page .button-container button:hover {
+  background-color: #0056b3;
+}
+
+.article-page .button-container button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.summary-container {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  border-left: 5px solid #007bff;
+  margin-top: 20px;
+  color: black;
+}
+
+.summary-container h3 {
+  margin-top: 0;
+  color: black;
+}
+
+/* Media Query for Mobile Devices */
+@media (max-width: 768px) {
+  .article-page {
+    padding: 15px;
+    width: 95%;
+  }
+
+  .article-page h1 {
+    font-size: 1.8em; /* Smaller font size for mobile titles */
+  }
+
+  .article-page p {
+    font-size: 1em; /* Smaller font size for mobile paragraphs */
+  }
+
+  .article-page .button-container {
+    flex-direction: column; /* Stack the buttons vertically on mobile */
+    gap: 10px;
+  }
+
+  .article-page .button-container a {
+    text-align: center; /* Center the link text */
+  }
+}

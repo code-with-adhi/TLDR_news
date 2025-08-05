@@ -6,7 +6,7 @@ import "./App.css";
 function App() {
   return (
     <div className="app">
-      <header className="app-header">📰 My AI News</header>
+      <header className="app-header">My News</header>
       <Routes>
         <Route path="/" element={<NewsList />} />
         <Route path="/article/:id" element={<ArticlePage />} />

@@ -5,7 +5,7 @@
   text-align: center;
   padding: 20px;
   background-color: #1e293b;
-  color: white;
+  color: ivory;
 }
 
 .news-list {
@@ -17,14 +17,20 @@
 }
 
 .card {
-  width: 300px;
+  width: 300px; /* Default width for desktop */
   border: 1px solid #ddd;
   border-radius: 10px;
   padding: 15px;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-  background-color: #fff;
+  background-color: ivory;
   display: flex;
   flex-direction: column;
+  color: black;
+  transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-5px);
 }
 
 .card img {
@@ -47,4 +53,21 @@
   color: #2563eb;
   text-decoration: none;
   font-weight: bold;
+}
+
+/* Media Query for Mobile devices */
+@media (max-width: 500px) {
+  .news-list {
+    gap: 15px;
+    padding: 10px; /* Reduced padding to give more space for the cards */
+  }
+  .card {
+    width: calc(100% - 20px); /* Use calc to account for margin/gap */
+    margin: 10px auto;
+    max-width: none;
+  }
+  .app-header {
+    font-size: 1.5rem;
+    padding: 15px;
+  }
 }

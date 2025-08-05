@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import "./ArticlePage.css";
 
 const ArticlePage = () => {
   const { state } = useLocation();
@@ -11,7 +12,6 @@ const ArticlePage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // New state variables for summarization
   const [summary, setSummary] = useState("");
   const [isSummarizing, setIsSummarizing] = useState(false);
 
@@ -47,7 +47,6 @@ const ArticlePage = () => {
     fetchScrapedContent();
   }, [articleFromList.url]);
 
-  // New function to handle the API call for summarization
   const handleSummarize = async () => {
     setIsSummarizing(true);
     setSummary("");
@@ -118,25 +117,24 @@ const ArticlePage = () => {
       {displayedImage && <img src={displayedImage} alt={displayedTitle} />}
       <p>{displayedContent}</p>
 
-      {/* New button to trigger summarization */}
-      <button
-        onClick={handleSummarize}
-        disabled={isSummarizing || !scrapedArticle}
-      >
-        {isSummarizing ? "Summarizing..." : "Summarize Article"}
-      </button>
+      <div className="button-container">
+        <button
+          onClick={handleSummarize}
+          disabled={isSummarizing || !scrapedArticle}
+        >
+          {isSummarizing ? "Summarizing..." : "Summarize Article"}
+        </button>
+        <a href={articleFromList.url} target="_blank" rel="noopener noreferrer">
+          View Original Source
+        </a>
+      </div>
 
-      {/* New section to display the summary */}
       {summary && (
         <div className="summary-container">
           <h3>Summary</h3>
           <p>{summary}</p>
         </div>
       )}
-
-      <a href={articleFromList.url} target="_blank" rel="noopener noreferrer">
-        View Original Source
-      </a>
     </div>
   );
 };
