@@ -11,11 +11,19 @@
     },
     {
       "src": "api/scrape.js",
-      "use": "@vercel/node"
+      "use": "@vercel/node",
+      "config": {
+        "memory": 2048,
+        "maxDuration": 60
+      }
     },
     {
       "src": "api/summarize.js",
-      "use": "@vercel/node"
+      "use": "@vercel/node",
+      "config": {
+        "memory": 2048,
+        "maxDuration": 60
+      }
     }
   ],
   "routes": [
@@ -25,7 +33,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/client/dist/$1"
+      "dest": "client/dist/$1"
     }
   ]
 }
