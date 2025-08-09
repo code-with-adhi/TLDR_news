@@ -2,6 +2,7 @@
 /client/node_modules
 /server/node_modules
 
+node_modules
 # Ignore all .env files that may be at the root or in sub-directories
 .env
 
