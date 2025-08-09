@@ -1,0 +1,31 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "client/package.json",
+      "use": "@vercel/static-build"
+    },
+    {
+      "src": "api/news.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "api/scrape.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "api/summarize.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/client/dist/$1"
+    }
+  ]
+}
